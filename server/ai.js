@@ -1,37 +1,70 @@
-// All Claude calls live here. Each one returns schema-validated JSON via structured outputs.
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+// All AI calls live here. Each one asks OpenRouter for JSON and validates it with the zod schema.
 import { z } from "zod";
 
-export const aiEnabled = Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN);
-const client = aiEnabled ? new Anthropic() : null;
+const API_KEY = process.env.OPENROUTER_API_KEY;
+export const aiEnabled = Boolean(API_KEY);
 
-const MODEL = process.env.INTERVIEWX_MODEL || "claude-opus-5-5";
+const MODEL = process.env.INTERVIEWX_MODEL || "baidu/ernie-5.5-flash-preview:free";
 
-async function ask({ system, prompt, schema, effort = "low" }) {
-  if (!client) {
+// Models sometimes wrap JSON in ```json fences or add a sentence around it.
+function extractJson(text = "") {
+  const from = text.indexOf("{");
+  const to = text.lastIndexOf("}");
+  if (from === -1 || to <= from) return null;
+  try {
+    return JSON.parse(text.slice(from, to + 1));
+  } catch {
+    return null;
+  }
+}
+
+async function ask({ system, prompt, schema }) {
+  if (!aiEnabled) {
     const e = new Error("AI not configured");
     e.status = 503;
     throw e;
   }
-  const res = await client.beta.messages.parse({
-    model: MODEL,
-    max_tokens: 16000,
-    // Low effort keeps the interview snappy; raise via env for deeper feedback.
-    output_config: {
-      effort: process.env.INTERVIEWX_EFFORT || effort,
-      format: betaZodOutputFormat(schema),
+  // The schema is also in the prompt as a fallback for models without strict structured outputs.
+  const jsonSchema = z.toJSONSchema(schema);
+  const messages = [
+    {
+      role: "system",
+      content: `${system}\n\nReply with only a JSON object that matches this JSON Schema, no other text:\n${JSON.stringify(jsonSchema)}`,
     },
-    // If a request is declined by a safety classifier, retry on a fallback model automatically.
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
-    system,
-    messages: [{ role: "user", content: prompt }],
-  });
-  if (res.stop_reason === "refusal" || !res.parsed_output) {
-    throw new Error(`No usable output (stop_reason=${res.stop_reason})`);
+    { role: "user", content: prompt },
+  ];
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+        "X-Title": "InterviewX",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages,
+        response_format: { type: "json_schema", json_schema: { name: "reply", strict: true, schema: jsonSchema } },
+        max_tokens: 8000, // ERNIE can reason before answering; reasoning counts toward this limit
+      }),
+    });
+    if (!res.ok) {
+      const e = new Error(`OpenRouter ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      e.status = res.status;
+      throw e;
+    }
+    const content = (await res.json()).choices?.[0]?.message?.content ?? "";
+    const parsed = schema.safeParse(extractJson(content));
+    if (parsed.success) return parsed.data;
+
+    // One retry, telling the model what was wrong.
+    messages.push(
+      { role: "assistant", content },
+      { role: "user", content: `That did not match the schema (${parsed.error.message.slice(0, 500)}). Reply with only the corrected JSON object.` }
+    );
   }
-  return res.parsed_output;
+  throw new Error("Model did not return valid JSON after a retry");
 }
 
 const clamp = (n, lo = 0, hi = 10) => Math.max(lo, Math.min(hi, Math.round(Number(n) || 0)));

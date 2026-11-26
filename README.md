@@ -7,11 +7,11 @@ An AI career platform for students and freshers: mock interviews, voice practice
 
 ```bash
 npm install
-cp .env.example .env        # optional: paste your ANTHROPIC_API_KEY into .env
+cp .env.example .env        # optional: paste your OPENROUTER_API_KEY into .env
 npm run dev                 # open http://localhost:5173
 ```
 
-- **With an API key:** interview questions, answer feedback, final summaries and resume analysis come from Claude, and the navbar badge says "Claude AI".
+- **With an API key:** interview questions, answer feedback, final summaries and resume analysis come from `baidu/ernie-5.5-flash-preview:free` on OpenRouter (change with `INTERVIEWX_MODEL`).
 - **Without a key:** the site runs in **Demo mode**, and says so everywhere. Feedback and resume scores come from transparent rules (word count, keywords, examples, sections), are labelled "rule-based", and never claim to be AI analysis.
 
 Production: `npm run build && npm start`, then open http://localhost:8787.
@@ -34,15 +34,15 @@ Everything is saved in the browser's **localStorage**, so there's no sign-up and
 
 ## Security & privacy
 
-- The API key is read from `.env` on the server (`server/ai.js`) and never sent to the browser.
-- Resume PDFs are read inside the browser. Only the extracted text is sent to the server, and only in Claude mode. In demo mode nothing is uploaded.
+- The OpenRouter API key is read from `.env` on the server (`server/ai.js`) and never sent to the browser.
+- Resume PDFs are read inside the browser. Only the extracted text is sent to the server, and only in AI mode. In demo mode nothing is uploaded.
 
 ## Project structure
 
 ```
 server/
   index.js            Express API (+ serves the built site in production)
-  ai.js               Claude prompts & schemas: question, evaluate, summary, resume
+  ai.js               OpenRouter prompts & schemas: question, evaluate, summary, resume
 src/
   App.jsx, router.jsx, AppContext.jsx
   pages/              Landing, Dashboard, Setup, Interview, Results, History,

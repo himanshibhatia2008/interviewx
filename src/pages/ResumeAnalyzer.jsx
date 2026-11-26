@@ -126,7 +126,7 @@ export default function ResumeAnalyzer() {
             <p className="privacy-note">
               <Icon name="shield" size={15} />
               {aiMode === "claude"
-                ? "Text is extracted in your browser, then sent to Claude for analysis. The PDF file itself never leaves your device."
+                ? "Text is extracted in your browser, then sent to the AI (ERNIE) for analysis. The PDF file itself never leaves your device."
                 : "Demo mode: everything runs in your browser with transparent rules — nothing is uploaded. Add an API key on the server for AI analysis."}
             </p>
           </section>
@@ -166,7 +166,7 @@ function ResumeReport({ r }) {
       <section className="glass glow card-pad resume-score">
         <ScoreRing score={r.score} max={100} size={150} stroke={12} label="/ 100" />
         <div>
-          <span className={`tag ${r.mode === "demo" ? "amber" : "violet"}`}>{r.mode === "demo" ? "Demo analysis · rule-based" : "AI analysis · Claude"}</span>
+          <span className={`tag ${r.mode === "demo" ? "amber" : "violet"}`}>{r.mode === "demo" ? "Demo analysis · rule-based" : "AI analysis · ERNIE"}</span>
           <h2 style={{ margin: "10px 0 6px" }}>{label} resume for {r.role}</h2>
           <p className="muted" style={{ margin: 0 }}>{r.summary}</p>
           <p className="small" style={{ color: "var(--text-3)", margin: "8px 0 0" }}>

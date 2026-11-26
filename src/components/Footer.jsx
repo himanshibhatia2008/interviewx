@@ -18,7 +18,7 @@ export default function Footer() {
           </div>
           <p className="muted small">{TAGLINE}</p>
           <p className="small" style={{ color: "var(--text-3)" }}>
-            Your progress is stored privately in this browser. AI features use Claude when an API key is configured on the server; otherwise a clearly labelled demo mode is used.
+            Your progress is stored privately in this browser. AI features use ERNIE via OpenRouter when an API key is configured on the server; otherwise a clearly labelled demo mode is used.
           </p>
         </div>
         {COLUMNS.map((c) => (

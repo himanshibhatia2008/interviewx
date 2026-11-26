@@ -49,7 +49,7 @@ export default function FeedbackCard({ feedback, compact = false, children }) {
       <div className="feedback-head">
         <ScoreRing score={score} size={118} />
         <div>
-          <span className="eyebrow">{demo ? "Demo feedback · rule-based" : "AI Feedback · Claude"}</span>
+          <span className="eyebrow">{demo ? "Demo feedback · rule-based" : "AI Feedback · ERNIE"}</span>
           <h3 style={{ fontSize: 26, margin: "6px 0 4px" }}>{verdict(score)}</h3>
           <p className="muted small" style={{ margin: 0 }}>
             {demo

@@ -47,9 +47,9 @@ export default function Navbar() {
           {aiMode && (
             <span
               className={`badge-ai ${aiMode === "demo" ? "demo" : ""}`}
-              title={aiMode === "demo" ? "No API key on the server — rule-based Demo mode" : "Powered by Claude"}
+              title={aiMode === "demo" ? "No API key on the server — rule-based Demo mode" : "Powered by ERNIE (OpenRouter)"}
             >
-              <i /> {aiMode === "demo" ? "Demo mode" : "Claude AI"}
+              <i /> {aiMode === "demo" ? "Demo mode" : "ERNIE AI"}
             </span>
           )}
           <button

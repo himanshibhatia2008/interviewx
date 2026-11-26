@@ -234,7 +234,7 @@ function DailyChallenge({ role, done }) {
             <div>
               <b><Icon name="check" size={16} /> Completed today</b>
               <p className="small muted" style={{ margin: "4px 0 0" }}>
-                {done.mode === "demo" ? "Scored by the rule-based demo evaluator." : "Scored by Claude."} A new challenge unlocks tomorrow.
+                {done.mode === "demo" ? "Scored by the rule-based demo evaluator." : "Scored by ERNIE AI."} A new challenge unlocks tomorrow.
               </p>
             </div>
           </div>
