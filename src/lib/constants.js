@@ -26,7 +26,7 @@ export const TYPES = [
   { id: "Mixed", hint: "A bit of everything" },
 ];
 
-export const COUNTS = [5, 8, 10];
+export const COUNTS = [2, 5, 8];
 
 export const SECONDS_PER_QUESTION = 120;
 

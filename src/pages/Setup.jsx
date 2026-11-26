@@ -14,7 +14,8 @@ function Choice({ selected, onClick, children, compact }) {
 
 export default function Setup() {
   const { config, setConfig, settings, update } = useApp();
-  const [c, setC] = useState(config);
+  // fall back to 5 if a previously saved count (e.g. 10) is no longer offered
+  const [c, setC] = useState(() => (COUNTS.includes(config.count) ? config : { ...config, count: 5 }));
   const set = (patch) => setC((p) => ({ ...p, ...patch }));
 
   const begin = () => {
