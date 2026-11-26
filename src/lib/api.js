@@ -1,4 +1,4 @@
-// Frontend AI client. Talks to our server (which talks to Claude).
+// Frontend AI client. Talks to our server (which talks to OpenRouter).
 // If the server has no API key — or isn't running — we fall back to the local Demo AI.
 import { offlineQuestion, offlineEvaluate, offlineSummary } from "./offlineAI.js";
 

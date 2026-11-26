@@ -1,4 +1,4 @@
-// InterviewX API server — keeps the Anthropic API key on the server, never in the browser.
+// InterviewX API server — keeps the OpenRouter API key on the server, never in the browser.
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -34,6 +34,6 @@ app.get(/^\/(?!api).*/, (_req, res, next) =>
 const PORT = process.env.PORT || 8787;
 app.listen(PORT, () =>
   console.log(
-    `InterviewX API on http://localhost:${PORT} — ${aiEnabled ? "Claude AI enabled" : "no ANTHROPIC_API_KEY, frontend will use Demo AI"}`
+    `InterviewX API on http://localhost:${PORT} — ${aiEnabled ? "AI enabled" : "no OPENROUTER_API_KEY, frontend will use Demo AI"}`
   )
 );
